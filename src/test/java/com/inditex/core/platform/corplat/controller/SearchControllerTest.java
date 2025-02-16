@@ -1,5 +1,6 @@
 package com.inditex.core.platform.corplat.controller;
 
+import com.inditex.core.platform.corplat.exception.NoContentException;
 import com.inditex.core.platform.corplat.model.Catalog.CatalogSearchRequest;
 import com.inditex.core.platform.corplat.model.Price;
 import com.inditex.core.platform.corplat.service.CatalogService;
@@ -81,13 +82,10 @@ class SearchControllerTest {
         when(catalogService.findByIdAndBrandAndDate(any(CatalogSearchRequest.class)))
                 .thenReturn(Collections.emptyList());
 
-        // Llamada al controlador
-        ResponseEntity<?> response = searchController.catalogSearch(product, brand, dateStr);
-
-        // Validaciones
-        assertNotNull(response);
-        assertEquals(204, response.getStatusCodeValue());
-        assertEquals("No hay ninguna coincidencia", response.getBody());
+        // Verificar que el controlador lanza la excepción NoContentException
+        assertThrows(NoContentException.class, () ->
+                searchController.catalogSearch(product, brand, dateStr)
+        );
 
         // Verificar que se llamó correctamente al servicio
         verify(catalogService, times(1)).findByIdAndBrandAndDate(any(CatalogSearchRequest.class));
@@ -108,13 +106,10 @@ class SearchControllerTest {
         when(catalogService.findByIdAndBrandAndDate(any(CatalogSearchRequest.class)))
                 .thenReturn(Collections.emptyList());
 
-        // Llamada al controlador con valores nulos
-        ResponseEntity<?> response = searchController.catalogSearch(null, null, "2020-06-14-00.00.00");
-
-        // Validaciones
-        assertNotNull(response);
-        assertEquals(204, response.getStatusCodeValue());
-        assertEquals("No hay ninguna coincidencia", response.getBody());
+        // Verificamos que el controlador lanza la excepción esperada
+        assertThrows(NoContentException.class, () ->
+                searchController.catalogSearch(null, null, "2020-06-14-00.00.00")
+        );
 
         // Verificar que se llamó correctamente al servicio
         verify(catalogService, times(1)).findByIdAndBrandAndDate(any(CatalogSearchRequest.class));

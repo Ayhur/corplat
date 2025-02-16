@@ -1,0 +1,115 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /v1/search:
+    get:
+      tags:
+        - search-controller
+      summary: Search products by search filter's.
+      description: |
+        Obtiene una lista de productos disponibles por producto y marca entre las fechas proporcionadas.
+        A tener en cuenta las siguientes condiciones:
+        1 - (Opcional) informar un ID de producto.
+        2 - (Opcional) informar una marca.
+        3 - (Opcional) informar un campo fecha sobre la que se realizarÃ¡ la consulta informativa.
+      operationId: catalogSearch
+      parameters:
+        - name: product
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: brand
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product list
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Price'
+              examples:
+                Example of a successful response:
+                  summary: Example response - HttpStatus 200 OK
+                  description: Example of a successful response
+                  value:
+                    - id: 1
+                      brand: 123
+                      idProduct: 456
+                      price: 99.99
+                      currency: EUR
+                      startDate: '2024-02-01T00:00:00'
+                      endDate: '2024-02-10T23:59:59'
+        '204':
+          description: No matches found
+          content:
+            '*/*':
+              examples:
+                Example of no content:
+                  summary: Example response - HttpStatus 204 No Content
+                  description: Example of no content
+                  value:
+                    message: No matches found
+        '400':
+          description: Bad Request
+          content:
+            '*/*':
+              examples:
+                Example of bad request:
+                  summary: Example response - HttpStatus 400 Bad Request
+                  description: Example of bad request
+                  value:
+                    error: Failed request.
+                    details: Re-check search filter's information.
+        '500':
+          description: Interal server error
+          content:
+            '*/*':
+              examples:
+                Example of server error:
+                  summary: Example response - HttpStatus 500 Internal Server Error
+                  description: Example of server error
+                  value: |
+                    {
+                        "message": "Unnable service. Try later",
+                    }
+components:
+  schemas:
+    Price:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        brandId:
+          type: integer
+          format: int32
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        priceList:
+          type: integer
+        productId:
+          type: integer
+        priority:
+          type: integer
+        price:
+          type: number
+        currency:
+          type: string

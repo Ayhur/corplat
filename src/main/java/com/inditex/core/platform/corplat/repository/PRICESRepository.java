@@ -14,7 +14,7 @@ public interface PRICESRepository extends JpaRepository<Price, Integer> {
 
     @Query("""
             FROM Price p WHERE p.productId = ?1 AND p.brandId = ?2 
-            AND ?3 BETWEEN p.startDate AND p.endDate
+            AND (:date IS NULL OR :date BETWEEN p.startDate AND p.endDate)
             """)
     List<Price> findByProductId (BigInteger productId, BigInteger brand, LocalDateTime date);
 
